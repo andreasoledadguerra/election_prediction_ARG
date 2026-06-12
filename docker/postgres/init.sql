@@ -1,0 +1,3 @@
+-- docker/postgres/init.sql # script de inicializacion automática de Postgres
+-- Este archivo se completará cuando se defina los datos que necesitamos y el modelo de datos.
+-- Por ahora solo sirve para que el contenedor inicie correctamente.
