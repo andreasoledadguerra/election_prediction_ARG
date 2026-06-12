@@ -20,7 +20,7 @@
 
 ## Links de interés
 
-- [Documentación oficial](https://resultados.mininterior.gob.ar/desarrollo)
+- [Documentación oficial](https://datos.gob.ar/dataset/dine-api-publicacion-resultados-electorales/archivo/dine_2.3)
 - [Portal de datos / descarga](https://datos.gob.ar/dataset/dine-api-publicacion-resultados-electorales/archivo/dine_2.3)
 - [Página del organismo](https://resultados.mininterior.gob.ar/)
 
