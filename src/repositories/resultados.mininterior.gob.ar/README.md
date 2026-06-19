@@ -25,3 +25,14 @@
 - [Página del organismo](https://www.argentina.gob.ar/interior)
 
 ---
+
+## Autenticación
+
+Esta API requiere un Bearer Token para todas las consultas.
+
+### Cómo obtenerlo
+
+1. Enviar un mail a `soportedine@mininterior.gob.ar` solicitando acceso.
+2. Indicar: finalidad del proyecto, datos a consultar, volumen estimado de uso.
+3. El organismo evalúa la solicitud y responde con el token.
+
