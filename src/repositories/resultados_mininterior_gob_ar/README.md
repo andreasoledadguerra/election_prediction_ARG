@@ -28,7 +28,11 @@
 
 ## Autenticación
 
-Esta API requiere un Bearer Token para todas las consultas.
+
+La documentación oficial indica que esta API requiere Bearer Token.
+En la práctica, el endpoint `/resultados/getResultados` responde con `200`
+sin autenticación. Se recomienda igual solicitar el token a
+`soportedine@mininterior.gob.ar` para uso en producción.
 
 ### Cómo obtenerlo
 
