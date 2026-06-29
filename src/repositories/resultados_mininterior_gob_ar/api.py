@@ -16,11 +16,9 @@ def get_resultados(
     mesa_id: str = None,
 ) -> dict:
 
+    # token opcional: la API responde 200 sin auth, pero podríarequerirlo en el futuro
     token = os.getenv("MININTERIOR_TOKEN")
-    if not token:
-        raise EnvironmentError("Falta MININTERIOR_TOKEN en las variables de entorno.")
-
-    headers = {"Authorization": f"Bearer {token}"}
+    headers = {"Authorization": f"Bearer {token}"} if token else {}
 
     params = {
         "categoriaId": categoria_id,
@@ -38,4 +36,4 @@ def get_resultados(
 
     response = requests.get(BASE_URL, headers=headers, params=params)
     response.raise_for_status()
-    return response.json() #dict con la respuesta JSON de la API
+    return response.json() # dict con la respuesta JSON de la API
