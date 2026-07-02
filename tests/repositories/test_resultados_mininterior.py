@@ -1,9 +1,11 @@
-from src.repositories.resultados_mininterior_gob_ar.api import get_resultados
+from src.repositories.resultados_mininterior_gob_ar.api import APIDatosGobArRepository
 
 
-def test_get_resultados_presidente_2019():
-    """Prueba que el endpoint devuelve datos reales para Presidente 2019 Generales."""
-    resultado = get_resultados(
+def test_get_resultados():
+    """Prueba que la clase instancia correctamente y el método get_resultados funciona."""
+
+    repository = APIDatosGobArRepository()
+    resultado = repository.get_resultados(
         categoria_id=1,
         anio_eleccion="2019",
         tipo_eleccion="2",
