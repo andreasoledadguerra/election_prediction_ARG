@@ -10,29 +10,29 @@ class APIDatosGobArRepository:
         token = os.getenv("MININTERIOR_TOKEN")
         self.headers = {"Authorization": f"Bearer {token}"} if token else {}
 
-    def get_resultados(
+    def get_results(
         self,
-        categoria_id: int,               # 1=Presidente, 2=Diputado Nacional, 3=Intendente
-        anio_eleccion: str = None,
-        tipo_eleccion: str = None,      # "1"=PASO, "2"=Generales, "3"=Segunda Vuelta
-        tipo_recuento: str = None,      # "1" (único valor documentado)
-        distrito_id: str = None,
-        seccion_provincial_id: str = None,
-        seccion_id: str = None,
-        circuito_id: str = None,
-        mesa_id: str = None,
+        category_id: int,               # 1=Presidente, 2=Diputado Nacional, 3=Intendente
+        election_year: str = None,
+        election_type: str = None,      # "1"=PASO, "2"=Generales, "3"=Segunda Vuelta
+        count_type: str = None,      # "1" (único valor documentado)
+        district_id: str = None,
+        provincial_section_id: str = None,
+        section_id: str = None,
+        circuit_id: str = None,
+        polling_station_id: str = None,
     ) -> dict:
 
         params = {
-            "categoriaId": categoria_id,
-            "anioEleccion": anio_eleccion,
-            "tipoEleccion": tipo_eleccion,
-            "tipoRecuento": tipo_recuento,
-            "distritoId": distrito_id,
-            "seccionProvincialId": seccion_provincial_id,
-            "seccionId": seccion_id,
-            "circuitoId": circuito_id,
-            "mesaId": mesa_id,
+            "categoriaId": category_id,
+            "anioEleccion": election_year,
+            "tipoEleccion": election_type,
+            "tipoRecuento": count_type,
+            "distritoId": district_id,
+            "seccionProvincialId": provincial_section_id,
+            "seccionId": section_id,
+            "circuitoId": circuit_id,
+            "mesaId": polling_station_id,
         }
         params = {k: v for k, v in params.items() if v is not None}
 
