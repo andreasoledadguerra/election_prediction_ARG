@@ -42,3 +42,32 @@ class APIDatosGobArRepository:
         response = requests.get(self.BASE_URL, headers=self.headers, params=params)
         response.raise_for_status()
         return response.json()
+    
+
+    # Método asíncrono para obtener resultados
+    async def get_results_async(self, list_params: list[dict]) -> list[dict]:
+
+        semaphore = asyncio.Semaphore(self.MAX_CONCURRENT)
+
+        async with httpx.AsyncClient(headers=self.headers) as client:
+            tasks = [
+                self._fetch_result(client, params, semaphore)
+                for params in list_params
+            ]
+            results = await asyncio.gather(*tasks)
+        
+        return results
+    
+    
+    # Método privado para realizar la solicitud asíncrona
+    async def _fetch_result(
+        self, client: httpx.AsyncClient, params: dict, semaphore: asyncio.Semaphore
+        ) -> dict:
+
+        async with semaphore:
+            response = await client.get(self.BASE_URL, params=params)
+            response.raise_for_status()
+            return response.json()
+        
+
+    # Método privado para construir los parámetros de la solicitud
