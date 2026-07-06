@@ -58,7 +58,7 @@ class APIDatosGobArRepository:
         
         return results
     
-    
+
     # Método privado para realizar la solicitud asíncrona
     async def _fetch_result(
         self, client: httpx.AsyncClient, params: dict, semaphore: asyncio.Semaphore
@@ -71,3 +71,29 @@ class APIDatosGobArRepository:
         
 
     # Método privado para construir los parámetros de la solicitud
+    def _build_params(
+        self,
+        category_id: int,
+        election_year: str = None,
+        election_type: str = None,
+        count_type: str = None,
+        district_id: str = None,
+        provincial_section_id: str = None,
+        section_id: str = None,
+        circuit_id: str = None,
+        polling_station_id: str = None,
+    ) -> dict:
+
+        params = {
+            "categoryId": category_id,
+            "electionYear": election_year,
+            "electionType": election_type,
+            "countType": count_type,
+            "districtId": district_id,
+            "provincialSectionId": provincial_section_id,
+            "sectionId": section_id,
+            "circuitId": circuit_id,
+            "pollingStationId": polling_station_id,     
+        }
+
+        return {k: v for k, v in params.items() if v is not None}
