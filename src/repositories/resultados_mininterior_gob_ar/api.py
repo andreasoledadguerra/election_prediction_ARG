@@ -64,8 +64,8 @@ class APIDatosGobArRepository:
         self, client: httpx.AsyncClient, params: dict, semaphore: asyncio.Semaphore
         ) -> dict:
 
-        async with semaphore:
-            response = await client.get(self.BASE_URL, params=params)
+        async with semaphore: # Pide permiso para ejecutar la solicitud, espera si ya hay 2 corriendo
+            response = await client.get(self.BASE_URL, params=params) # Al salir del async with, libera el permiso para que otra solicitud pueda ejecutarse
             response.raise_for_status()
             return response.json()
         
