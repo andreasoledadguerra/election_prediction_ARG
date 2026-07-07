@@ -85,15 +85,15 @@ class APIDatosGobArRepository:
     ) -> dict:
 
         params = {
-            "categoryId": category_id,
-            "electionYear": election_year,
-            "electionType": election_type,
-            "countType": count_type,
-            "districtId": district_id,
-            "provincialSectionId": provincial_section_id,
-            "sectionId": section_id,
-            "circuitId": circuit_id,
-            "pollingStationId": polling_station_id,     
+            "categoriaId": category_id,
+            "anioEleccion": election_year,
+            "tipoEleccion": election_type,
+            "tipoRecuento": count_type,
+            "distritoId": district_id,
+            "seccionProvincialId": provincial_section_id,
+            "seccionId": section_id,
+            "circuitoId": circuit_id,
+            "mesaId": polling_station_id,     
         }
 
         return {k: v for k, v in params.items() if v is not None}
