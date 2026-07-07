@@ -7,11 +7,11 @@ async def main():
     #ejemplo de parámetros para obtener resultados
     comb_params = [
         {
-            "category_id": 1,
-            "election_year": "2019",
-            "election_type": "2",
-            "count_type": "1",
-            "district_id": str(d)}
+            "categoriaId": 1,
+            "anioEleccion": "2019",
+            "tipoEleccion": "2",
+            "tipoRecuento": "1",
+            "distritoId": str(d)}
         for d in range(1, 25)
     ]
 
