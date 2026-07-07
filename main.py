@@ -1,4 +1,5 @@
 import asyncio
+import json
 from src.repositories.resultados_mininterior_gob_ar.api import APIDatosGobArRepository
 
 async def main():
@@ -17,6 +18,9 @@ async def main():
 
     results = await repo.get_results_async(comb_params)
     print(f"Resultados obtenidos: {len(results)}")
+
+    # Imprimir el primer resultado de manera legible (se puede borrar)
+    print(json.dumps(results[0], indent=2, ensure_ascii=False))
 
 if __name__ == "__main__":
     asyncio.run(main())
