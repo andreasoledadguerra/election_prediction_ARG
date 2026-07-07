@@ -49,7 +49,10 @@ class APIDatosGobArRepository:
 
         semaphore = asyncio.Semaphore(self.MAX_CONCURRENT)
 
-        async with httpx.AsyncClient(headers=self.headers) as client:
+        async with httpx.AsyncClient(
+            headers=self.headers,
+            timeout=30.0
+            ) as client:
             tasks = [
                 self._fetch_result(client, params, semaphore)
                 for params in list_params
