@@ -16,7 +16,7 @@ async def main():
         for d in range(1, 25)
     ]
 
-    results = await repo.get_results_async(comb_params)
+    results = await repo.get_results_bulk(comb_params)
     print(f"Resultados obtenidos: {len(results)}")
 
     # Imprimir el primer resultado de manera legible (se puede borrar)
