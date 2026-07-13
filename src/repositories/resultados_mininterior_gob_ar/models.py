@@ -2,7 +2,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 
-class ResultadosParams(BaseModel):
+class ResultsParams(BaseModel):
     category_id: int = Field(..., alias="categoriaId")
     election_year: Optional[str] = Field(None, alias="anioEleccion")    
     election_type: Optional[str] = Field(None, alias="tipoEleccion")

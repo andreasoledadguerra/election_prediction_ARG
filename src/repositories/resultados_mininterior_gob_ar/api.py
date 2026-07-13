@@ -46,7 +46,7 @@ class APIDatosGobArRepository:
 
 
     # Método asíncrono para obtener resultados
-    async def get_results_bulk(self, list_params: list[dict]) -> list[dict]:
+    async def get_results_bulk(self, list_params: list[ResultadosParams]) -> list[dict]:
         semaphore = asyncio.Semaphore(self.MAX_CONCURRENT)
         async with httpx.AsyncClient(
             headers=self.headers,
@@ -62,10 +62,10 @@ class APIDatosGobArRepository:
 
     # Método privado para realizar la solicitud asíncrona
     async def _fetch_result(
-        self, client: httpx.AsyncClient, params: dict, semaphore: asyncio.Semaphore
+        self, client: httpx.AsyncClient, params: ResultadosParams, semaphore: asyncio.Semaphore
         ) -> dict:
 
-        query_params = ResultadosParams(**params).to_query_params()  # Convierte los parámetros a query params usando Pydantic  
+        query_params = params.to_query_params()
         
         async with semaphore: # Pide permiso para ejecutar la solicitud, espera si ya hay 2 corriendo
             response = await client.get(self.BASE_URL, params=query_params) # Al salir del async with, libera el permiso para que otra solicitud pueda ejecutarse
