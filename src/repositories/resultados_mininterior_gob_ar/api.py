@@ -2,13 +2,14 @@ import os
 import asyncio
 import httpx
 
-from src.repositories.resultados_mininterior_gob_ar.models import ResultadosParams
+from src.repositories.resultados_mininterior_gob_ar.models import ResultsParams
 
 
 class APIDatosGobArRepository:
 
     BASE_URL = "https://resultados.mininterior.gob.ar/api/resultados/getResultados"
     MAX_CONCURRENT = 2  # Número máximo de solicitudes concurrentes
+    TIMEOUT = 30.0 # segundos
 
     def __init__(self):
         token = os.getenv("MININTERIOR_TOKEN")
@@ -27,7 +28,7 @@ class APIDatosGobArRepository:
             polling_station_id: str = None,
         ) -> dict:
 
-            params = ResultadosParams(
+            params = ResultsParams(
                 category_id=category_id,
                 election_year=election_year,
                 election_type=election_type,
@@ -39,18 +40,18 @@ class APIDatosGobArRepository:
                 polling_station_id=polling_station_id,
             ).to_query_params() 
 
-            async with httpx.AsyncClient(headers=self.headers, timeout=30.0) as client:
+            async with httpx.AsyncClient(headers=self.headers, timeout=self.TIMEOUT) as client:
                 response = await client.get(self.BASE_URL, params=params)
                 response.raise_for_status()
                 return response.json()
 
 
     # Método asíncrono para obtener resultados
-    async def get_results_bulk(self, list_params: list[ResultadosParams]) -> list[dict]:
+    async def get_results_bulk(self, list_params: list[ResultsParams]) -> list[dict]:
         semaphore = asyncio.Semaphore(self.MAX_CONCURRENT)
         async with httpx.AsyncClient(
             headers=self.headers,
-            timeout=30.0
+            timeout=self.TIMEOUT
             ) as client:
             tasks = [
                 self._fetch_result(client, params, semaphore)
@@ -62,7 +63,7 @@ class APIDatosGobArRepository:
 
     # Método privado para realizar la solicitud asíncrona
     async def _fetch_result(
-        self, client: httpx.AsyncClient, params: ResultadosParams, semaphore: asyncio.Semaphore
+        self, client: httpx.AsyncClient, params: ResultsParams, semaphore: asyncio.Semaphore
         ) -> dict:
 
         query_params = params.to_query_params()
