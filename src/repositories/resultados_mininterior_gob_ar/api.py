@@ -27,30 +27,34 @@ class APIDatosGobArRepository:
         token = os.getenv("MININTERIOR_TOKEN")
         self.headers = {"Authorization": f"Bearer {token}"} if token else {}
 
-    # Método asíncrono para obtener resultados
-    async def get_results_bulk(self, list_params: list[ResultsParams]) -> list[dict]:
-        semaphore = asyncio.Semaphore(self.MAX_CONCURRENT)
+    async def get_results(self, params: ResultsParams) -> dict:
         async with httpx.AsyncClient(
             headers=self.headers,
             timeout=self.TIMEOUT
             ) as client:
-            tasks = [
-                self._fetch_result(client, params, semaphore)
-                for params in list_params
-            ]
+                return await self._fetch_result(client, params)
+        
+    async def get_results_bulk(self, list_params: list[ResultsParams]) -> list[dict]:
+        semaphore = asyncio.Semaphore(self.MAX_CONCURRENT)
+
+        async def fetch_with_limit(params:ResultsParams) -> dict:
+            async with semaphore:
+                return await self._fetch_result(client, params) 
+
+        async with httpx.AsyncClient(
+            headers=self.headers,
+            timeout=self.TIMEOUT
+            ) as client:
+            tasks = [fetch_with_limit(params) for params in list_params]        
             results = await asyncio.gather(*tasks)
         return results
     
-
-    # Método privado para realizar la solicitud asíncrona
     async def _fetch_result(
-        self, client: httpx.AsyncClient, params: ResultsParams, semaphore: asyncio.Semaphore
+        self, client: httpx.AsyncClient, params: ResultsParams
         ) -> dict:
-
-        query_params = params.to_query_params()
-        
-        async with semaphore: # Pide permiso para ejecutar la solicitud, espera si ya hay 2 corriendo
-            response = await client.get(self.BASE_URL, params=query_params) # Al salir del async with, libera el permiso para que otra solicitud pueda ejecutarse
-            response.raise_for_status()
-            return response.json()
+        response = await client.get(
+            self.BASE_URL, params=params.model_dump(by_alias=True, exclude_none=True)
+        )
+        response.raise_for_status()
+        return response.json()
         
