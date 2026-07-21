@@ -1,7 +1,7 @@
 import os
 import asyncio
 import httpx
-
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class APIDatosGobArRepository:
