@@ -2,7 +2,6 @@ import os
 import asyncio
 import httpx
 
-from src.repositories.resultados_mininterior_gob_ar.models import ResultsParams
 
 
 class APIDatosGobArRepository:
