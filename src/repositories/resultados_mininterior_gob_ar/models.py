@@ -13,7 +13,7 @@ class ResultsParams(BaseModel):
     circuit_id: Optional[str] = Field(None, alias="circuitoId")
     polling_station_id: Optional[str] = Field(None, alias="mesaId")
 
-    model_config = {"populate_by_name": True}
+    model_config = DictConfig(populate_by_name=True)
 
     def to_query_params(self) -> dict:
         return {k: v for k, v in 
