@@ -1,8 +1,20 @@
 import os
 import asyncio
 import httpx
+from pydantic import BaseModel, ConfigDict, Field
 
-from src.repositories.resultados_mininterior_gob_ar.models import ResultsParams
+class ResultsParams(BaseModel):
+    category_id: int = Field(..., alias="categoriaId")
+    election_year: Optional[str] = Field(None, alias="anioEleccion")    
+    election_type: Optional[str] = Field(None, alias="tipoEleccion")
+    count_type: Optional[str] = Field(None, alias="tipoRecuento")
+    district_id: Optional[str] = Field(None, alias="distritoId")
+    provincial_section_id: Optional[str] = Field(None, alias="seccionProvincialId") 
+    section_id: Optional[str] = Field(None, alias="seccionId")
+    circuit_id: Optional[str] = Field(None, alias="circuitoId")
+    polling_station_id: Optional[str] = Field(None, alias="mesaId")
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class APIDatosGobArRepository:
@@ -15,61 +27,34 @@ class APIDatosGobArRepository:
         token = os.getenv("MININTERIOR_TOKEN")
         self.headers = {"Authorization": f"Bearer {token}"} if token else {}
 
-        async def get_results(
-            self,
-            category_id: int,               # 1=Presidente, 2=Diputado Nacional, 3=Intendente
-            election_year: str = None,
-            election_type: str = None,      # "1"=PASO, "2"=Generales, "3"=Segunda Vuelta
-            count_type: str = None,      # "1" (único valor documentado)
-            district_id: str = None,
-            provincial_section_id: str = None,
-            section_id: str = None,
-            circuit_id: str = None,
-            polling_station_id: str = None,
-        ) -> dict:
-
-            params = ResultsParams(
-                category_id=category_id,
-                election_year=election_year,
-                election_type=election_type,
-                count_type=count_type,
-                district_id=district_id,
-                provincial_section_id=provincial_section_id,
-                section_id=section_id,
-                circuit_id=circuit_id,
-                polling_station_id=polling_station_id,
-            ).to_query_params() 
-
-            async with httpx.AsyncClient(headers=self.headers, timeout=self.TIMEOUT) as client:
-                response = await client.get(self.BASE_URL, params=params)
-                response.raise_for_status()
-                return response.json()
-
-
-    # Método asíncrono para obtener resultados
-    async def get_results_bulk(self, list_params: list[ResultsParams]) -> list[dict]:
-        semaphore = asyncio.Semaphore(self.MAX_CONCURRENT)
+    async def get_results(self, params: ResultsParams) -> dict:
         async with httpx.AsyncClient(
             headers=self.headers,
             timeout=self.TIMEOUT
             ) as client:
-            tasks = [
-                self._fetch_result(client, params, semaphore)
-                for params in list_params
-            ]
+                return await self._fetch_result(client, params)
+        
+    async def get_results_bulk(self, list_params: list[ResultsParams]) -> list[dict]:
+        semaphore = asyncio.Semaphore(self.MAX_CONCURRENT)
+
+        async def fetch_with_limit(params:ResultsParams) -> dict:
+            async with semaphore:
+                return await self._fetch_result(client, params) 
+
+        async with httpx.AsyncClient(
+            headers=self.headers,
+            timeout=self.TIMEOUT
+            ) as client:
+            tasks = [fetch_with_limit(params) for params in list_params]        
             results = await asyncio.gather(*tasks)
         return results
     
-
-    # Método privado para realizar la solicitud asíncrona
     async def _fetch_result(
-        self, client: httpx.AsyncClient, params: ResultsParams, semaphore: asyncio.Semaphore
+        self, client: httpx.AsyncClient, params: ResultsParams
         ) -> dict:
-
-        query_params = params.to_query_params()
-        
-        async with semaphore: # Pide permiso para ejecutar la solicitud, espera si ya hay 2 corriendo
-            response = await client.get(self.BASE_URL, params=query_params) # Al salir del async with, libera el permiso para que otra solicitud pueda ejecutarse
-            response.raise_for_status()
-            return response.json()
+        response = await client.get(
+            self.BASE_URL, params=params.model_dump(by_alias=True, exclude_none=True)
+        )
+        response.raise_for_status()
+        return response.json()
         
