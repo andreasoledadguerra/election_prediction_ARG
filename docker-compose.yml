@@ -26,8 +26,8 @@ services:
       environment:
         MONGO_INITDB_DATABASE: ${MONGO_DB}
 
-  volumes:
-    postgres_data:
-      name: proyecto_elecciones_data
-    mongo_data:
-      name: election_mongo_data
+volumes:
+  postgres_data:
+    name: proyecto_elecciones_data
+  mongo_data:
+    name: election_mongo_data
