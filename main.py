@@ -1,6 +1,4 @@
 import asyncio
-import json
-from pathlib import Path
 
 from src.repositories.resultados_mininterior_gob_ar.api import (
     APIDatosGobArRepository,
