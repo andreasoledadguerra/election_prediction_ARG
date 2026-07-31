@@ -1,7 +1,6 @@
 import asyncio
 import os
 from typing import Optional
-
 import httpx
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -52,9 +51,12 @@ class APIDatosGobArRepository:
 
     async def _fetch_result(
         self, client: httpx.AsyncClient, params: ResultsParams
-    ) -> dict:
-        response = await client.get(
-            self.BASE_URL, params=params.model_dump(by_alias=True, exclude_none=True)
-        )
-        response.raise_for_status()
-        return response.json()
+    ) -> dict | None:
+        try: 
+            response = await client.get(
+                self.BASE_URL, params=params.model_dump(by_alias=True, exclude_none=True)
+            )
+            response.raise_for_status()
+            return response.json()
+        except httpx.HTTPStatusError:
+            return None
