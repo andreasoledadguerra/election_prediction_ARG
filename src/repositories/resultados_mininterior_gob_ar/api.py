@@ -23,7 +23,7 @@ class APIDatosGobArRepository:
 
     BASE_URL = "https://resultados.mininterior.gob.ar/api/resultados/getResultados"
     MAX_CONCURRENT = 2  # Número máximo de solicitudes concurrentes
-    TIMEOUT = 30.0  # segundos
+    TIMEOUT = 60.0  # segundos
 
     def __init__(self):
         token = os.getenv("MININTERIOR_TOKEN")
@@ -57,6 +57,9 @@ class APIDatosGobArRepository:
                 self.BASE_URL, params=params.model_dump(by_alias=True, exclude_none=True)
             )
             response.raise_for_status()
-            return response.json()
-        except httpx.HTTPStatusError:
+            data = response.json()
+            if not data.get("valoresTotalizadosPositivos"):
+                return None
+            return data
+        except (httpx.HTTPStatusError, httpx.ReadTimeout, httpx.ConnectError):
             return None
