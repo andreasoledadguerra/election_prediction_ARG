@@ -22,7 +22,7 @@ async def main():
     mongo_repo = MongoRepository(
         mongo_url=os.getenv("MONGO_URL", "mongodb://localhost:27017"),
         db_name=os.getenv("MONGO_DB", "election_prediction"),
-        collection_name="resultados_electorales",
+        collection_name=os.getenv("MONGO_COLLECTION", "resultados_electorales")
     )
 
     comb_params = [
