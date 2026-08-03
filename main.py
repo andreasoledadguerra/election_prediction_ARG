@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 from itertools import product
 from pathlib import Path
 
@@ -18,7 +19,11 @@ COUNT_TYPES = "1" # único valor documentado
 
 async def main():
     repo = APIDatosGobArRepository()
-    mongo_repo = MongoRepository()
+    mongo_repo = MongoRepository(
+        mongo_url=os.getenv("MONGO_URL", "mongodb://localhost:27017"),
+        db_name=os.getenv("MONGO_DB", "election_prediction"),
+        collection_name="resultados_electorales",
+    )
 
     comb_params = [
         ResultsParams(

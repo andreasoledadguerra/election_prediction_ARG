@@ -7,11 +7,11 @@ class MongoRepository:
     DB_NAME = os.getenv("MONGO_DB", "election_prediction")
     COLLECTION_NAME = "resultados_electorales"
 
-    def __init__(self):
+    def __init__(self, mongo_url: str, db_name: str, collection_name:str):
         mongo_url = os.getenv("MONGO_URL", "mongodb://localhost:27017")
         self.client = AsyncIOMotorClient(mongo_url)
-        self.db = self.client[self.DB_NAME]
-        self.collection = self.db[self.COLLECTION_NAME]
+        self.db = self.client[db_name]
+        self.collection = self.db[collection_name]
 
     async def insert_if_not_exists(self, params: dict, response_json: dict) -> bool:
         """
